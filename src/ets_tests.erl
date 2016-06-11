@@ -240,6 +240,30 @@ constructor_test_() ->
                                 etslists:zip(Xs_ets, etslists:constructor(Ys)),
                                 etslists:to_list(Xs_ets)
                             end)
+      end,
+      fun({Xs, Xs_ets, Ys}) ->
+              F14 = fun(A, B) -> A + B end,
+              ?_assertEqual(lists:zipwith(F14, Xs, Ys),
+                            begin
+                                etslists:zipwithl(F14, Xs_ets, Ys),
+                                etslists:to_list(Xs_ets)
+                            end)
+      end,
+      fun({Xs, Xs_ets, Ys}) ->
+              F15 = fun(A, B) -> A + B end,
+              ?_assertEqual(lists:zipwith(F15, Ys, Xs),
+                            begin
+                                etslists:zipwithr(F15, Ys, Xs_ets),
+                                etslists:to_list(Xs_ets)
+                            end)
+      end,
+      fun({Xs, Xs_ets, Ys}) ->
+              F16 = fun(A, B) -> A + B end,
+              ?_assertEqual(lists:zipwith(F16, Xs, Ys),
+                            begin
+                                etslists:zipwith(F16, Xs_ets, etslists:constructor(Ys)),
+                                etslists:to_list(Xs_ets)
+                            end)
       end
      ]
     }.

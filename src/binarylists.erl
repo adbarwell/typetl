@@ -292,3 +292,28 @@ zip([], []) ->
     [];
 zip([X | Xs], [Y | Ys]) ->
     [term_to_binary({binary_to_term(X), binary_to_term(Y)}) | zip(Xs, Ys)].
+
+zipwithl(F, Xs, Ys) when is_binary(Xs) ->
+    binarylists:constructor(lists:zipwith(F, binarylists:revert(Xs), Ys));
+zipwithl(_, [], []) ->
+    [];
+zipwithl(F, [X | Xs], [Y | Ys]) ->
+    [term_to_binary(F(binary_to_term(X), Y)) | zipwithl(F, Xs, Ys)].
+
+zipwithr(F, Xs, Ys) when is_binary(Ys) ->
+    binarylists:constructor(lists:zipwith(F, Xs, binarylists:revert(Ys)));
+zipwithr(_, [], []) ->
+    [];
+zipwithr(F, [X | Xs], [Y | Ys]) ->
+    [term_to_binary(F(X, binary_to_term(Y))) | zipwithr(F, Xs, Ys)].
+
+zipwith(F, Xs, Ys) when is_binary(Xs), is_binary(Ys) ->
+    binarylists:constructor(lists:zipwith(
+                              F,
+                              binarylists:revert(Xs),
+                              binarylists:revert(Ys)));
+zipwith(_, [], []) ->
+    [];
+zipwith(F, [X | Xs], [Y | Ys]) ->
+    [term_to_binary(F(binary_to_term(X), binary_to_term(Y)))
+     | zipwith(F, Xs, Ys)].

@@ -342,3 +342,24 @@ zip(Xs, Ys) ->
                         ets:update_element(Xs, K, {2, V}),
                         K-1
                 end, erlang:length(Zs), Zs).
+
+zipwithl(F, Xs, Ys) ->
+    Zs = lists:zipwith(F, to_list(Xs), Ys),
+    lists:foldr(fun(V, K) ->
+                        ets:update_element(Xs, K, {2, V}),
+                        K-1
+                end, erlang:length(Zs), Zs).
+
+zipwithr(F, Xs, Ys) ->
+    Zs = lists:zipwith(F, Xs, to_list(Ys)),
+    lists:foldr(fun(V, K) ->
+                        ets:update_element(Ys, K, {2, V}),
+                        K-1
+                end, erlang:length(Zs), Zs).
+
+zipwith(F, Xs, Ys) ->
+    Zs = lists:zipwith(F, to_list(Xs), to_list(Ys)),
+    lists:foldr(fun(V, K) ->
+                        ets:update_element(Xs, K, {2, V}),
+                        K-1
+                end, erlang:length(Zs), Zs).

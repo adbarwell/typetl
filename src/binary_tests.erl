@@ -236,7 +236,33 @@ binary_test_() ->
                                                                 binarylists:constructor(Ys_io)))),
                ?_assertEqual(lists:zip(Xs_term, Ys_term),
                              binarylists:revert(binarylists:zip(Xs_term_bin,
-                                                                binarylists:constructor(Ys_term))))
+                                                                binarylists:constructor(Ys_term)))),
+               begin
+                   F24 = fun(X, Y) -> X + Y end,
+                   F25 = fun(X, Y) -> element(2, X) + element(2, Y) end,
+                   [
+                    ?_assertEqual(lists:zipwith(F24, Xs_io, Ys_io),
+                                  binarylists:revert(
+                                    binarylists:zipwithl(F24, Xs_io_bin, Ys_io))),
+                    ?_assertEqual(lists:zipwith(F24, Ys_io, Xs_io),
+                                  binarylists:revert(
+                                    binarylists:zipwithr(F24, Ys_io, Xs_io_bin))),
+                    ?_assertEqual(lists:zipwith(F24, Xs_io, Ys_io),
+                                  binarylists:revert(
+                                    binarylists:zipwith(F24, Xs_io_bin,
+                                                        binarylists:constructor(Ys_io)))),
+                    ?_assertEqual(lists:zipwith(F25, Xs_term, Ys_term),
+                                  binarylists:revert(
+                                    binarylists:zipwithl(F25, Xs_term_bin, Ys_term))),
+                    ?_assertEqual(lists:zipwith(F25, Ys_term, Xs_term),
+                                  binarylists:revert(
+                                    binarylists:zipwithr(F25, Ys_term, Xs_term_bin))),
+                    ?_assertEqual(lists:zipwith(F25, Xs_term, Ys_term),
+                                  binarylists:revert(
+                                    binarylists:zipwith(F25, Xs_term_bin,
+                                                        binarylists:constructor(Ys_term))))
+                   ]
+               end
               ]
       end
      ]
