@@ -317,3 +317,28 @@ subtract(Xs, Ys) when is_pid(Xs); is_atom(Xs) ->
     insert(Xs, lists:reverse(element(2, Zs)));
 subtract(Ys, Xs) when is_pid(Xs); is_atom(Xs) ->
     lists:subtract(Ys, etslists:to_list(Xs)).
+
+%% When ets table is on the left
+zipl(Xs, Ys) ->
+    Zs = lists:zip(to_list(Xs), Ys),
+    lists:foldr(fun(V, K) ->
+                        ets:update_element(Xs, K, {2, V}),
+                        K-1
+                end, erlang:length(Zs), Zs).
+
+%% When ets table is on the right
+zipr(Xs, Ys) ->
+    Zs = lists:zip(Xs, to_list(Ys)),
+    lists:foldr(fun(V, K) ->
+                        ets:update_element(Ys, K, {2, V}),
+                        K-1
+                end, erlang:length(Zs), Zs).
+
+
+%% When both arguments are ets tables
+zip(Xs, Ys) ->
+    Zs = lists:zip(to_list(Xs), to_list(Ys)),
+    lists:foldr(fun(V, K) ->
+                        ets:update_element(Xs, K, {2, V}),
+                        K-1
+                end, erlang:length(Zs), Zs).

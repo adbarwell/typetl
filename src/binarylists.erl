@@ -284,3 +284,11 @@ zipr([], []) ->
     [];
 zipr([X | Xs], [Y | Ys]) ->
     [term_to_binary({X, binary_to_term(Y)}) | zipr(Xs, Ys)].
+
+%% When both arguments are binary lists
+zip(Xs, Ys) when is_binary(Xs), is_binary(Ys) ->
+    binarylists:constructor(lists:zip(binarylists:revert(Xs), binarylists:revert(Ys)));
+zip([], []) ->
+    [];
+zip([X | Xs], [Y | Ys]) ->
+    [term_to_binary({binary_to_term(X), binary_to_term(Y)}) | zip(Xs, Ys)].

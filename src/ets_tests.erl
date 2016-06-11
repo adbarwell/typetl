@@ -219,6 +219,27 @@ constructor_test_() ->
       fun({Xs, Xs_ets, Ys}) ->
               ?_assertEqual(lists:subtract(Ys, Xs),
                             etslists:subtract(Ys, Xs_ets))
+      end,
+      fun({Xs, Xs_ets, Ys}) ->
+              ?_assertEqual(lists:zip(Xs, Ys),
+                            begin
+                                etslists:zipl(Xs_ets, Ys),
+                                etslists:to_list(Xs_ets)
+                            end)
+      end,
+      fun({Xs, Xs_ets, Ys}) ->
+              ?_assertEqual(lists:zip(Ys, Xs),
+                            begin
+                                etslists:zipr(Ys, Xs_ets),
+                                etslists:to_list(Xs_ets)
+                            end)
+      end,
+      fun({Xs, Xs_ets, Ys}) ->
+              ?_assertEqual(lists:zip(Xs, Ys),
+                            begin
+                                etslists:zip(Xs_ets, etslists:constructor(Ys)),
+                                etslists:to_list(Xs_ets)
+                            end)
       end
      ]
     }.

@@ -230,7 +230,13 @@ binary_test_() ->
                ?_assertEqual(lists:zip(Xs_io, Xs_term),
                              binarylists:revert(binarylists:zipr(Xs_io, Xs_term_bin))),
                ?_assertEqual(lists:zip(Ys_term, Xs_term),
-                             binarylists:revert(binarylists:zipr(Ys_term, Xs_term_bin)))
+                             binarylists:revert(binarylists:zipr(Ys_term, Xs_term_bin))),
+               ?_assertEqual(lists:zip(Xs_io, Ys_io),
+                             binarylists:revert(binarylists:zip(Xs_io_bin,
+                                                                binarylists:constructor(Ys_io)))),
+               ?_assertEqual(lists:zip(Xs_term, Ys_term),
+                             binarylists:revert(binarylists:zip(Xs_term_bin,
+                                                                binarylists:constructor(Ys_term))))
               ]
       end
      ]
