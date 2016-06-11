@@ -5,16 +5,16 @@
 %% -----------------------------------------------------------------------------
 %% Binary functions
 
-constructor(Xs) ->
+converter(Xs) ->
     try list_to_binary(Xs)
     catch
         error:badarg ->
             lists:map(fun term_to_binary/1, Xs)
     end.
 
-revert(Xs) when is_binary(Xs) ->
+to_list(Xs) when is_binary(Xs) ->
     binary_to_list(Xs);
-revert(Xs) when is_list(Xs) ->
+to_list(Xs) when is_list(Xs) ->
     lists:map(fun binary_to_term/1, Xs).
 
 
@@ -31,7 +31,7 @@ all(F, Xs) ->
 
 %% Binlist must be on the left -- revert if on left
 append(Xs, Ys) when is_binary(Xs) ->
-    case constructor(Ys) of
+    case converter(Ys) of
         Ys_bin when is_binary(Ys_bin) ->
             <<Xs/binary, Ys_bin/binary>>;
         Ys_bin when is_list(Ys_bin) ->
@@ -127,7 +127,7 @@ map(F, Xs) ->
               end, Xs).
 
 map_1(_, <<>>, Acc) ->
-    binarylists:constructor(lists:reverse(Acc));
+    binarylists:converter(lists:reverse(Acc));
 map_1(F, <<X, Xs/binary>>, Acc) ->
     map_1(F, Xs, [F(X) | Acc]).
 
@@ -146,7 +146,7 @@ member(X, Xs) ->
 
 %% Binlist must be on the left -- revert if on right
 merge(Xs, Ys) when is_binary(Xs) ->
-    case constructor(Ys) of
+    case converter(Ys) of
         Ys_bin when is_binary(Ys_bin) ->
             merge_1(Xs, Ys_bin);
         Ys_bin when is_list(Ys_bin) ->
@@ -271,7 +271,7 @@ takewhile(F, Xs) ->
 
 %% When binary list is on the left
 zipl(Xs, Ys) when is_binary(Xs) ->
-    binarylists:constructor(lists:zip(binarylists:revert(Xs), Ys));
+    binarylists:converter(lists:zip(binarylists:to_list(Xs), Ys));
 zipl([], []) ->
     [];
 zipl([X | Xs], [Y | Ys]) ->
@@ -279,7 +279,7 @@ zipl([X | Xs], [Y | Ys]) ->
 
 %% When binary list is on the right
 zipr(Xs, Ys) when is_binary(Ys) ->
-    binarylists:constructor(lists:zip(Xs, binarylists:revert(Ys)));
+    binarylists:converter(lists:zip(Xs, binarylists:to_list(Ys)));
 zipr([], []) ->
     [];
 zipr([X | Xs], [Y | Ys]) ->
@@ -287,31 +287,31 @@ zipr([X | Xs], [Y | Ys]) ->
 
 %% When both arguments are binary lists
 zip(Xs, Ys) when is_binary(Xs), is_binary(Ys) ->
-    binarylists:constructor(lists:zip(binarylists:revert(Xs), binarylists:revert(Ys)));
+    binarylists:converter(lists:zip(binarylists:to_list(Xs), binarylists:to_list(Ys)));
 zip([], []) ->
     [];
 zip([X | Xs], [Y | Ys]) ->
     [term_to_binary({binary_to_term(X), binary_to_term(Y)}) | zip(Xs, Ys)].
 
 zipwithl(F, Xs, Ys) when is_binary(Xs) ->
-    binarylists:constructor(lists:zipwith(F, binarylists:revert(Xs), Ys));
+    binarylists:converter(lists:zipwith(F, binarylists:to_list(Xs), Ys));
 zipwithl(_, [], []) ->
     [];
 zipwithl(F, [X | Xs], [Y | Ys]) ->
     [term_to_binary(F(binary_to_term(X), Y)) | zipwithl(F, Xs, Ys)].
 
 zipwithr(F, Xs, Ys) when is_binary(Ys) ->
-    binarylists:constructor(lists:zipwith(F, Xs, binarylists:revert(Ys)));
+    binarylists:converter(lists:zipwith(F, Xs, binarylists:to_list(Ys)));
 zipwithr(_, [], []) ->
     [];
 zipwithr(F, [X | Xs], [Y | Ys]) ->
     [term_to_binary(F(X, binary_to_term(Y))) | zipwithr(F, Xs, Ys)].
 
 zipwith(F, Xs, Ys) when is_binary(Xs), is_binary(Ys) ->
-    binarylists:constructor(lists:zipwith(
-                              F,
-                              binarylists:revert(Xs),
-                              binarylists:revert(Ys)));
+    binarylists:converter(lists:zipwith(
+                            F,
+                            binarylists:to_list(Xs),
+                            binarylists:to_list(Ys)));
 zipwith(_, [], []) ->
     [];
 zipwith(F, [X | Xs], [Y | Ys]) ->

@@ -5,16 +5,17 @@
 %% -----------------------------------------------------------------------------
 %% ETS functions
 
-constructor(Name, Xs) ->
+converter(Name, Xs) ->
     Tab = ets:new(Name, [% 'bag',
                          'ordered_set',
-                         'named_table', %% needed for test cleanup
+                         'named_table' %% needed for test cleanup
+                                      ,
                          'public' %% needed for tests
                         ]),
     insert(Tab, Xs),
     Tab.
 
-constructor(Xs) -> %% Generate table name
+converter(Xs) -> %% Generate table name
     Tab = ets:new(gen_name(), [% 'bag',
                                'ordered_set'
                                %% 'named_table', %% needed for test cleanup

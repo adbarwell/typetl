@@ -6,11 +6,11 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-constructor_test_() ->
+ets_test_() ->
     {foreach,
      fun() ->
              Xs = lists:seq(1, 100),
-             Xs_ets = etslists:constructor('etslist', Xs),
+             Xs_ets = etslists:converter('etslist', Xs),
              Ys = lists:seq(51, 150),
              {Xs, Xs_ets, Ys}
      end,
@@ -54,12 +54,12 @@ constructor_test_() ->
                                 end
                         end,
                    [
-                    ?_assertEqual(lists:filter(F3, Xs),
-                                  etslists:filter(F3, Xs_ets)),
-                    ?_assertEqual(lists:filtermap(F3, Xs),
-                                  etslists:filtermap(F3, Xs_ets)),
-                    ?_assertEqual(lists:filtermap(F4, Xs),
-                                  etslists:filtermap(F4, Xs_ets))
+                    ?_assertEqual((lists:filter(F3, Xs)),
+                                  (etslists:filter(F3, Xs_ets))),
+                    ?_assertEqual((lists:filtermap(F3, Xs)),
+                                  (etslists:filtermap(F3, Xs_ets))),
+                    ?_assertEqual((lists:filtermap(F4, Xs)),
+                                  (etslists:filtermap(F4, Xs_ets)))
                    ]
                end
               ]
@@ -90,14 +90,14 @@ constructor_test_() ->
       end,
       fun({Xs, Xs_ets, Ys}) ->
               Xs_deep = lists:duplicate(10, Xs),
-              Xs_deep_ets = etslists:constructor(Xs_deep),
+              Xs_deep_ets = etslists:converter(Xs_deep),
               F6 = fun(X) -> [X + 1] end,
               [
-               ?_assertEqual(lists:flatlength(Xs),
-                             etslists:flatlength(Xs_ets)),
-               ?_assertEqual(lists:flatlength(Xs_deep),
-                             etslists:flatlength(Xs_deep_ets)),
-               ?_assertEqual(lists:flatmap(F6, Xs),
+               ?_assertEqual((lists:flatlength(Xs)),
+                             (etslists:flatlength(Xs_ets))),
+               ?_assertEqual((lists:flatlength(Xs_deep)),
+                             (etslists:flatlength(Xs_deep_ets))),
+               ?_assertEqual((lists:flatmap(F6, Xs)),
                              begin
                                  etslists:flatmap(F6, Xs_ets),
                                  etslists:to_list(Xs_ets)
@@ -107,7 +107,7 @@ constructor_test_() ->
       fun({Xs, Xs_ets, Ys}) ->
               F7 = fun(X) -> [X, X, X] end,
               [
-               ?_assertEqual(lists:flatmap(F7, Xs),
+               ?_assertEqual((lists:flatmap(F7, Xs)),
                              begin
                                  etslists:flatmap(F7, Xs_ets),
                                  etslists:to_list(Xs_ets)
@@ -116,27 +116,27 @@ constructor_test_() ->
       end,
       fun({Xs, Xs_ets, Ys}) ->
               F8 = fun(X, Sum) -> X+Sum end,
-              Empty_ets = etslists:constructor([]),
+              Empty_ets = etslists:converter([]),
               [
-               ?_assertEqual(lists:flatten(Xs),
+               ?_assertEqual((lists:flatten(Xs)),
                              begin
                                  etslists:flatten(Xs_ets),
                                  etslists:to_list(Xs_ets)
                              end),
-               ?_assertEqual(lists:foldl(F8, 0, Xs),
-                             etslists:foldl(F8, 0, Xs_ets)),
-               ?_assertEqual(lists:foldr(F8, 0, Xs),
-                             etslists:foldr(F8, 0, Xs_ets)),
-               ?_assertEqual(lists:last(Xs),
-                             etslists:last(Xs_ets)),
+               ?_assertEqual((lists:foldl(F8, 0, Xs)),
+                             (etslists:foldl(F8, 0, Xs_ets))),
+               ?_assertEqual((lists:foldr(F8, 0, Xs)),
+                             (etslists:foldr(F8, 0, Xs_ets))),
+               ?_assertEqual((lists:last(Xs)),
+                             (etslists:last(Xs_ets))),
                ?_assertError("No clause matching empty list.",
-                             etslists:last(Empty_ets))
+                             (etslists:last(Empty_ets)))
               ]
       end,
       fun({Xs, Xs_ets, Ys}) ->
               F9 = fun(X) -> X*2 end,
               [
-               ?_assertEqual(lists:map(F9, Xs),
+               ?_assertEqual((lists:map(F9, Xs)),
                              begin
                                  etslists:map(F9, Xs_ets),
                                  etslists:to_list(Xs_ets)
@@ -147,23 +147,23 @@ constructor_test_() ->
               F10 = fun(X, Sum) -> {2*X, X+Sum} end,
               F11 = fun(X, Sum) -> {2/X, X-Sum} end,
               [
-               ?_assertEqual(lists:mapfoldl(F10, 0, Xs),
-                             etslists:mapfoldl(F10, 0, Xs_ets)),
-               ?_assertEqual(lists:mapfoldr(F10, 0, Xs),
-                             etslists:mapfoldr(F10, 0, Xs_ets)),
-               ?_assertEqual(lists:mapfoldl(F11, 0, Xs),
-                             etslists:mapfoldl(F11, 0, Xs_ets)),
-               ?_assertEqual(lists:mapfoldr(F11, 0, Xs),
-                             etslists:mapfoldr(F11, 0, Xs_ets)),
-               ?_assertEqual(lists:max(Xs),
-                             etslists:max(Xs_ets)),
-               ?_assertEqual(lists:member(5, Xs),
-                             etslists:member(5, Xs_ets)),
-               ?_assertEqual(lists:member('nothere', Xs),
-                             etslists:member('nothere', Xs_ets)),
-               ?_assertEqual(lists:min(Xs),
-                             etslists:min(Xs_ets)),
-               ?_assertEqual(lists:merge(Xs, Ys),
+               ?_assertEqual((lists:mapfoldl(F10, 0, Xs)),
+                             (etslists:mapfoldl(F10, 0, Xs_ets))),
+               ?_assertEqual((lists:mapfoldr(F10, 0, Xs)),
+                             (etslists:mapfoldr(F10, 0, Xs_ets))),
+               ?_assertEqual((lists:mapfoldl(F11, 0, Xs)),
+                             (etslists:mapfoldl(F11, 0, Xs_ets))),
+               ?_assertEqual((lists:mapfoldr(F11, 0, Xs)),
+                             (etslists:mapfoldr(F11, 0, Xs_ets))),
+               ?_assertEqual((lists:max(Xs)),
+                             (etslists:max(Xs_ets))),
+               ?_assertEqual((lists:member(5, Xs)),
+                             (etslists:member(5, Xs_ets))),
+               ?_assertEqual((lists:member('nothere', Xs)),
+                             (etslists:member('nothere', Xs_ets))),
+               ?_assertEqual((lists:min(Xs)),
+                             (etslists:min(Xs_ets))),
+               ?_assertEqual((lists:merge(Xs, Ys)),
                              begin
                                  etslists:mergel(Xs_ets, Ys),
                                  etslists:to_list(Xs_ets)
@@ -172,9 +172,9 @@ constructor_test_() ->
       end,
       fun({Xs, Xs_ets, Ys}) ->
               [
-               ?_assertEqual(lists:nth(5, Xs),
-                             etslists:nth(5, Xs_ets)),
-               ?_assertEqual(lists:nthtail(5, Xs),
+               ?_assertEqual((lists:nth(5, Xs)),
+                             (etslists:nth(5, Xs_ets))),
+               ?_assertEqual((lists:nthtail(5, Xs)),
                              begin
                                  etslists:nthtail(5, Xs_ets),
                                  etslists:to_list(Xs_ets)
@@ -184,9 +184,9 @@ constructor_test_() ->
       fun({Xs, Xs_ets, Ys}) ->
               F12 = fun(X) -> X < 50 end,
               [
-               ?_assertEqual(lists:partition(F12, Xs),
-                             etslists:partition(F12, Xs_ets)),
-               ?_assertEqual(lists:reverse(Xs),
+               ?_assertEqual((lists:partition(F12, Xs)),
+                             (etslists:partition(F12, Xs_ets))),
+               ?_assertEqual((lists:reverse(Xs)),
                              begin
                                  etslists:reverse(Xs_ets),
                                  etslists:to_list(Xs_ets)
@@ -196,7 +196,7 @@ constructor_test_() ->
       fun({Xs, Xs_ets, Ys}) ->
               F13 = fun(A, B) -> A =< B end,
               [
-               ?_assertEqual(lists:sort(F13, Xs),
+               ?_assertEqual((lists:sort(F13, Xs)),
                              begin
                                  etslists:sort(F13, Xs_ets),
                                  etslists:to_list(Xs_ets)
@@ -205,11 +205,11 @@ constructor_test_() ->
       end,
       fun({Xs, Xs_ets, Ys}) ->
               [
-               ?_assertEqual(lists:split(50, Xs),
-                             etslists:split(50, Xs_ets)),
-               ?_assertEqual(lists:sublist(Xs, 5, 10),
-                             etslists:sublist(Xs_ets, 5, 10)),
-               ?_assertEqual(lists:subtract(Xs, Ys),
+               ?_assertEqual((lists:split(50, Xs)),
+                             (etslists:split(50, Xs_ets))),
+               ?_assertEqual((lists:sublist(Xs, 5, 10)),
+                             (etslists:sublist(Xs_ets, 5, 10))),
+               ?_assertEqual((lists:subtract(Xs, Ys)),
                              begin
                                  etslists:subtract(Xs_ets, Ys),
                                  etslists:to_list(Xs_ets)
@@ -217,33 +217,33 @@ constructor_test_() ->
               ]
       end,
       fun({Xs, Xs_ets, Ys}) ->
-              ?_assertEqual(lists:subtract(Ys, Xs),
-                            etslists:subtract(Ys, Xs_ets))
+              ?_assertEqual((lists:subtract(Ys, Xs)),
+                            (etslists:subtract(Ys, Xs_ets)))
       end,
       fun({Xs, Xs_ets, Ys}) ->
-              ?_assertEqual(lists:zip(Xs, Ys),
+              ?_assertEqual((lists:zip(Xs, Ys)),
                             begin
                                 etslists:zipl(Xs_ets, Ys),
                                 etslists:to_list(Xs_ets)
                             end)
       end,
       fun({Xs, Xs_ets, Ys}) ->
-              ?_assertEqual(lists:zip(Ys, Xs),
+              ?_assertEqual((lists:zip(Ys, Xs)),
                             begin
                                 etslists:zipr(Ys, Xs_ets),
                                 etslists:to_list(Xs_ets)
                             end)
       end,
       fun({Xs, Xs_ets, Ys}) ->
-              ?_assertEqual(lists:zip(Xs, Ys),
+              ?_assertEqual((lists:zip(Xs, Ys)),
                             begin
-                                etslists:zip(Xs_ets, etslists:constructor(Ys)),
-                                etslists:to_list(Xs_ets)
-                            end)
+                               etslists:zip(Xs_ets, etslists:converter(Ys)),
+                               etslists:to_list(Xs_ets)
+                           end)
       end,
       fun({Xs, Xs_ets, Ys}) ->
               F14 = fun(A, B) -> A + B end,
-              ?_assertEqual(lists:zipwith(F14, Xs, Ys),
+              ?_assertEqual((lists:zipwith(F14, Xs, Ys)),
                             begin
                                 etslists:zipwithl(F14, Xs_ets, Ys),
                                 etslists:to_list(Xs_ets)
@@ -251,7 +251,7 @@ constructor_test_() ->
       end,
       fun({Xs, Xs_ets, Ys}) ->
               F15 = fun(A, B) -> A + B end,
-              ?_assertEqual(lists:zipwith(F15, Ys, Xs),
+              ?_assertEqual((lists:zipwith(F15, Ys, Xs)),
                             begin
                                 etslists:zipwithr(F15, Ys, Xs_ets),
                                 etslists:to_list(Xs_ets)
@@ -259,11 +259,11 @@ constructor_test_() ->
       end,
       fun({Xs, Xs_ets, Ys}) ->
               F16 = fun(A, B) -> A + B end,
-              ?_assertEqual(lists:zipwith(F16, Xs, Ys),
+              ?_assertEqual((lists:zipwith(F16, Xs, Ys)),
                             begin
-                                etslists:zipwith(F16, Xs_ets, etslists:constructor(Ys)),
-                                etslists:to_list(Xs_ets)
-                            end)
+                               etslists:zipwith(F16, Xs_ets, etslists:converter(Ys)),
+                               etslists:to_list(Xs_ets)
+                           end)
       end
      ]
     }.
